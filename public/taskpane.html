@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>OpenAI Word Assistant</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://res.cdn.office.net/officehub/officethemes/OfficeThemes.4a7dc42594.css" />
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f3f2f1;
+        color: #323130;
+      }
+      .container {
+        padding: 16px;
+      }
+      h1 {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-top: 12px;
+        margin-bottom: 4px;
+      }
+      textarea,
+      select,
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px;
+        border: 1px solid #8a8886;
+        border-radius: 4px;
+        font-size: 13px;
+        background-color: #fff;
+      }
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      details {
+        margin-top: 12px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      button {
+        margin-top: 12px;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        background-color: #0078d4;
+        color: #fff;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      button.secondary {
+        background-color: #605e5c;
+      }
+      button:disabled {
+        background-color: #c8c6c4;
+        cursor: not-allowed;
+      }
+      .button-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .status {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 4px;
+        background-color: #fff;
+        border: 1px solid #edebe9;
+        font-size: 12px;
+        min-height: 48px;
+        white-space: pre-wrap;
+      }
+      .status.error {
+        border-color: #a80000;
+        color: #a80000;
+      }
+      .panel {
+        margin-top: 16px;
+        background: #fff;
+        padding: 12px;
+        border-radius: 4px;
+        border: 1px solid #edebe9;
+      }
+      ul.telemetry {
+        padding-left: 18px;
+        margin: 0;
+      }
+    </style>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script defer src="taskpane.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>OpenAI Word Assistant</h1>
+      <p style="font-size: 12px; margin-top: 0;">Use OpenAI to improve your Word documents without leaving the editor.</p>
+
+      <label for="operation">Operation</label>
+      <select id="operation">
+        <option value="rewrite">Rewrite</option>
+        <option value="summarize">Summarize</option>
+        <option value="translate">Translate</option>
+        <option value="fix-grammar">Fix Grammar</option>
+      </select>
+
+      <label for="tone">Tone (optional)</label>
+      <select id="tone">
+        <option value="">Auto</option>
+        <option value="formal">Formal</option>
+        <option value="friendly">Friendly</option>
+        <option value="technical">Technical</option>
+      </select>
+
+      <label for="language">Language (ISO code)</label>
+      <input type="text" id="language" placeholder="e.g. en, es, fr" />
+
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt">Rewrite the selected text to be clearer and more concise.</textarea>
+
+      <label for="model">Model</label>
+      <input type="text" id="model" value="gpt-4.1-mini" />
+
+      <details>
+        <summary>API Settings</summary>
+        <label for="api-key">OpenAI API Key</label>
+        <input type="password" id="api-key" placeholder="sk-..." autocomplete="off" />
+        <div class="button-row">
+          <button id="save-key" type="button">Save key</button>
+          <button id="clear-key" type="button" class="secondary">Clear key</button>
+        </div>
+        <p style="font-size: 11px; color: #605e5c;">
+          Keys are stored with <code>OfficeRuntime.storage</code> when available, otherwise <code>localStorage</code>.
+          For production deployments use a secure backend proxy and do not store secrets on the client.
+        </p>
+      </details>
+
+      <div class="button-row">
+        <button id="run-selection" type="button">Run on Selection</button>
+        <button id="replace-selection" type="button">Replace Selection</button>
+        <button id="insert-cursor" type="button" class="secondary">Insert at Cursor</button>
+      </div>
+
+      <div class="status" id="status" aria-live="polite"></div>
+
+      <div class="panel">
+        <strong>Telemetry (last 5 operations)</strong>
+        <ul class="telemetry" id="telemetry"></ul>
+      </div>
+    </div>
+  </body>
+</html>
